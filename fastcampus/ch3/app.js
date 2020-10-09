@@ -8,7 +8,7 @@ const app = express();
 const port = 3000;
 
 nunjucks.configure("template", {
-  autoescape: true, // for security
+  autoescape: true, // prevents executing html tags from users
   express: app,
 });
 
