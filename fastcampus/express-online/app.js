@@ -3,50 +3,90 @@ const nunjucks = require("nunjucks");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
 
-const admin = require("./routes/admin");
-const contacts = require("./routes/contacts");
+class App {
+  constructor() {
+    this.app = express();
 
-const app = express();
-const port = 3000;
+    // 뷰엔진 세팅
+    this.setViewEngine();
 
-nunjucks.configure("template", {
-  autoescape: true, // prevents executing html tags from users
-  express: app,
-});
+    // 미들웨어 세팅
+    this.setMiddleWare();
 
-// 미들웨어 셋팅
-app.use(logger("dev"));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+    // 정적 디렉토리 추가
+    this.setStatic();
 
-app.use('/uploads', express.static('uploads'));
+    // 로컬 변수
+    this.setLocals();
 
-app.use((req, res, next) => {
-  app.locals.isLogin = false;
-  app.locals.req_path = req.path;
-  next();
-});
+    // 라우팅
+    this.getRouting();
 
-app.get("/", (req, res) => {
-  res.send("express start");
-});
+    // 404 페이지를 찾을수가 없음
+    this.status404();
 
-const vipMiddleware = (_, res, next) => {
-  console.log("최우선 미들웨어");
-  next();
-};
+    // 에러 처리
+    this.errorHandler();
+  }
 
-app.use("/admin", vipMiddleware, admin);
-app.use("/contacts", contacts);
+  setMiddleWare() {
+    // 미들웨어 세팅
+    this.app.use(logger("dev"));
+    this.app.use(bodyParser.json());
+    this.app.use(bodyParser.urlencoded({ extended: false }));
+  }
 
-app.use((req, res, _) => {
-  res.status(400).render('common/404.html');
-});
+  setViewEngine() {
+    nunjucks.configure("template", {
+      autoescape: true, // prevents executing html tags from users
+      express: this.app,
+    });
+  }
 
-app.use((req, res, _) => {
-  res.status(500).render('common/500.html');
-});
+  setStatic() {
+    this.app.use("uploads", express.static("uploads"));
+  }
 
-app.listen(port, () => {
-  console.log("Express listening on port", port);
-});
+  setLocals() {
+    // 템플릿 변수
+    this.app.use((req, _, next) => {
+      this.app.locals.isLogin = true;
+      this.app.locals.req_path = req.path;
+      next();
+    });
+  }
+
+  getRouting() {
+    this.app.use(require("./controllers"));
+  }
+
+  status404() {
+    this.app.use((req, res, _) => {
+      res.status(404).render("common/404.html");
+    });
+  }
+
+  errorHandler() {
+    this.app.use((err, req, res, _) => {
+      console.log(err);
+      res.status(500).render("common/500.html");
+    });
+  }
+}
+
+// const admin = require("./routes/admin");
+// const contacts = require("./routes/contacts");
+
+// app.get("/", (req, res) => {
+//   res.send("express start");
+// });
+
+// const vipMiddleware = (_, res, next) => {
+//   console.log("최우선 미들웨어");
+//   next();
+// };
+
+// app.use("/admin", vipMiddleware, admin);
+// app.use("/contacts", contacts);
+
+module.exports = new App().app;
