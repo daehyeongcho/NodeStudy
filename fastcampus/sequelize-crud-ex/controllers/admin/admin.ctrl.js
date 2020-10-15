@@ -1,3 +1,5 @@
+const models = require("../../models");
+
 exports.get_products = (_, res) => {
   res.render(
     "admin/products.html",
@@ -11,4 +13,7 @@ exports.get_products_write = (_, res) => {
 
 exports.post_products_write = (req, res) => {
   // res.send(req.body);
+  models.Products.create(req.body).then(() => {
+    res.redirect("/admin/products");
+  });
 };
