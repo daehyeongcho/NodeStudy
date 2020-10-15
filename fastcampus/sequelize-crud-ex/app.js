@@ -3,10 +3,14 @@ const nunjucks = require("nunjucks");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
 
+// db 관련
+const db = require("./models");
+
 class App {
   constructor() {
     this.app = express();
 
+    this.dbConnection(); // db 접속
     this.setViewEngine(); // 뷰엔진 셋팅
     this.setMiddleWare(); // 미들웨어 셋팅
     this.setStatic(); // 정적 디렉토리 추가
@@ -14,6 +18,21 @@ class App {
     this.getRouting(); // 라우팅
     this.status404(); // 404 페이지를 찾을수가 없음
     this.errorHandler(); // 에러처리
+  }
+
+  dbConnection() {
+    // DB authentication
+    db.sequelize
+      .authenticate()
+      .then(() => {
+        console.log("Connection has been established successfully.");
+      })
+      .then(() => {
+        console.log("DB Sync complete.");
+      })
+      .catch((err) => {
+        console.error("Unable to connect to the database:", err);
+      });
   }
 
   setMiddleWare() {
