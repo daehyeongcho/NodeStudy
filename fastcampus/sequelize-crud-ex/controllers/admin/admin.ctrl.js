@@ -21,3 +21,10 @@ exports.post_products_write = (req, res) => {
     res.redirect("/admin/products");
   });
 };
+
+exports.get_products_detail = (req, res) => {
+  // req.params.id
+  models.Products.findByPk(req.params.id).then((product) => {
+    res.render("admin/detail.html", { product });
+  });
+};
