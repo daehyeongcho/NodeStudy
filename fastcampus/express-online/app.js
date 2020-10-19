@@ -1,76 +1,76 @@
-const express = require("express");
-const nunjucks = require("nunjucks");
-const logger = require("morgan");
-const bodyParser = require("body-parser");
+const express = require('express')
+const nunjucks = require('nunjucks')
+const logger = require('morgan')
+const bodyParser = require('body-parser')
 
 class App {
-  constructor() {
-    this.app = express();
+  constructor () {
+    this.app = express()
 
     // 뷰엔진 세팅
-    this.setViewEngine();
+    this.setViewEngine()
 
     // 미들웨어 세팅
-    this.setMiddleWare();
+    this.setMiddleWare()
 
     // 정적 디렉토리 추가
-    this.setStatic();
+    this.setStatic()
 
     // 로컬 변수
-    this.setLocals();
+    this.setLocals()
 
     // 라우팅
-    this.getRouting();
+    this.getRouting()
 
     // 404 페이지를 찾을수가 없음
-    this.status404();
+    this.status404()
 
     // 에러 처리
-    this.errorHandler();
+    this.errorHandler()
   }
 
-  setMiddleWare() {
+  setMiddleWare () {
     // 미들웨어 세팅
-    this.app.use(logger("dev"));
-    this.app.use(bodyParser.json());
-    this.app.use(bodyParser.urlencoded({ extended: false }));
+    this.app.use(logger('dev'))
+    this.app.use(bodyParser.json())
+    this.app.use(bodyParser.urlencoded({ extended: false }))
   }
 
-  setViewEngine() {
-    nunjucks.configure("template", {
+  setViewEngine () {
+    nunjucks.configure('template', {
       autoescape: true, // prevents executing html tags from users
-      express: this.app,
-    });
+      express: this.app
+    })
   }
 
-  setStatic() {
-    this.app.use("uploads", express.static("uploads"));
+  setStatic () {
+    this.app.use('uploads', express.static('uploads'))
   }
 
-  setLocals() {
+  setLocals () {
     // 템플릿 변수
     this.app.use((req, _, next) => {
-      this.app.locals.isLogin = true;
-      this.app.locals.req_path = req.path;
-      next();
-    });
+      this.app.locals.isLogin = true
+      this.app.locals.req_path = req.path
+      next()
+    })
   }
 
-  getRouting() {
-    this.app.use(require("./controllers"));
+  getRouting () {
+    this.app.use(require('./controllers'))
   }
 
-  status404() {
+  status404 () {
     this.app.use((req, res, _) => {
-      res.status(404).render("common/404.html");
-    });
+      res.status(404).render('common/404.html')
+    })
   }
 
-  errorHandler() {
+  errorHandler () {
     this.app.use((err, req, res, _) => {
-      console.log(err);
-      res.status(500).render("common/500.html");
-    });
+      console.log(err)
+      res.status(500).render('common/500.html')
+    })
   }
 }
 
@@ -89,4 +89,4 @@ class App {
 // app.use("/admin", vipMiddleware, admin);
 // app.use("/contacts", contacts);
 
-module.exports = new App().app;
+module.exports = new App().app

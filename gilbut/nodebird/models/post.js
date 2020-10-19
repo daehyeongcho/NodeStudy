@@ -4,15 +4,15 @@ module.exports = (sequelize, DataTypes) =>
     {
       content: {
         type: DataTypes.STRING(140),
-        allowNull: false,
+        allowNull: false
       },
       img: {
         type: DataTypes.STRING(200),
-        allowNull: true,
-      },
+        allowNull: true
+      }
     },
     {
       timestamps: true,
-      paranoid: true,
-    },
-  );
+      paranoid: true
+    }
+  )

@@ -1,11 +1,11 @@
-const { Router } = require("express");
-const router = Router();
-const ctrl = require("./contacts.ctrl");
+const { Router } = require('express')
+const router = Router()
+const ctrl = require('./contacts.ctrl')
 
-router.get("/", (_, res) => {
-  res.send("contacts app");
-});
+router.get('/', (_, res) => {
+  res.send('contacts app')
+})
 
-router.get("/list", ctrl.get_list);
+router.get('/list', ctrl.get_list)
 
-module.exports = router;
+module.exports = router

@@ -5,28 +5,28 @@ module.exports = (sequelize, DataTypes) =>
       email: {
         type: DataTypes.STRING(40),
         allowNull: true,
-        unique: true,
+        unique: true
       },
       nick: {
         type: DataTypes.STRING(15),
-        allowNull: false,
+        allowNull: false
       },
       password: {
         type: DataTypes.STRING(100),
-        allowNull: true,
+        allowNull: true
       },
       provider: {
         type: DataTypes.STRING(10),
         allowNull: false,
-        defaultValue: 'local',
+        defaultValue: 'local'
       },
       snsId: {
         type: DataTypes.STRING(30),
-        allowNull: true,
-      },
+        allowNull: true
+      }
     },
     {
       timestamp: true,
-      paranoid: true,
-    },
-  );
+      paranoid: true
+    }
+  )

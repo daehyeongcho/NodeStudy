@@ -1,3 +1,3 @@
-const myVar = require("./myvar");
-const setVar = new myVar();
-console.log(setVar.name);
+const MyVar = require('./myvar')
+const setVar = new MyVar()
+console.log(setVar.name)

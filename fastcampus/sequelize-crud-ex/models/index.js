@@ -1,9 +1,9 @@
-var Sequelize = require("sequelize");
-var path = require("path");
-var fs = require("fs");
-var dotenv = require("dotenv");
+var Sequelize = require('sequelize')
+var path = require('path')
+var fs = require('fs')
+var dotenv = require('dotenv')
 
-dotenv.config(); // LOAD CONFIG
+dotenv.config() // LOAD CONFIG
 
 const sequelize = new Sequelize(
   process.env.DATABASE,
@@ -11,35 +11,35 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD,
   {
     host: process.env.DB_HOST,
-    dialect: "mysql",
-    timezone: "+09:00",
+    dialect: 'mysql',
+    timezone: '+09:00',
     operatorAliases: Sequelize.Op,
     pool: {
       max: 5,
       min: 0,
-      idle: 10000,
-    },
+      idle: 10000
+    }
   }
-);
+)
 
-let db = [];
+const db = []
 
 fs.readdirSync(__dirname)
   .filter((file) => {
-    return file.indexOf(".js") && file !== "index.js";
+    return file.indexOf('.js') && file !== 'index.js'
   })
   .forEach((file) => {
-    var model = sequelize.import(path.join(__dirname, file));
-    db[model.name] = model;
-  });
+    var model = sequelize.import(path.join(__dirname, file))
+    db[model.name] = model
+  })
 
 Object.keys(db).forEach((modelName) => {
-  if ("associate" in db[modelName]) {
-    db[modelName].associate(db);
+  if ('associate' in db[modelName]) {
+    db[modelName].associate(db)
   }
-});
+})
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+db.sequelize = sequelize
+db.Sequelize = Sequelize
 
-module.exports = db;
+module.exports = db

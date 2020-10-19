@@ -5,11 +5,11 @@ module.exports = (sequelize, DataTypes) =>
       title: {
         type: DataTypes.STRING(15),
         allowNull: false,
-        unique: true,
-      },
+        unique: true
+      }
     },
     {
       timestamps: true,
-      paranoid: true,
-    },
-  );
+      paranoid: true
+    }
+  )
