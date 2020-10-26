@@ -110,16 +110,18 @@ function say (word) {
   console.log(word)
 }
 
-// IIFE (즉시 실행되는 함수 표현)
-// 전역 스코프에 불필요한 변수 추가해서 오염되는 것을 방지
-// IIFE 안의 변수는 외부에서 접근 불가
+/*
+ * IIFE (즉시 실행되는 함수 표현)
+ * 전역 스코프에 불필요한 변수 추가해서 오염되는 것을 방지
+ * IIFE 안의 변수는 외부에서 접근 불가
+ */
 var r = (function () {
   var lang = 'js'
   return lang
 })()
 try {
   console.log(r)
-  console.log(lang) // error
+  console.log(lang) // eslint-disable-line
 } catch (err) {
   console.error(err)
 }
@@ -131,13 +133,15 @@ try {
 
 // Error Handling 연습문제
 try {
-  notDefined
+  notDefined // eslint-disable-line
 } catch {}
 console.log('a')
 
-// Arror Functions
-// JS에서 Lambda Function 같은 문법 사용 가능
-// This Scope 변경
+/*
+ * Arror Functions
+ * JS에서 Lambda Function 같은 문법 사용 가능
+ * This Scope 변경
+ */
 const add = (var1, var2) => var1 + var2
 console.log(add(1, 2))
 
@@ -161,7 +165,7 @@ console.log(add(1, 2))
 
 // Arror Function 연습문제
 // Curried Function
-const getDiscount = (price, rate) => price * rate
+// const getDiscount = (price, rate) => price * rate
 // 회원등급에 따른 할인율이 존재하고 이벤트도 많은 경우 이런 함수는 못씀
 // 합성함수 만들듯이 해보자
 const newGetDiscount = rate => price => rate * price
