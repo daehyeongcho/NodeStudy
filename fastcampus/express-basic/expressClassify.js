@@ -3,6 +3,10 @@
 const express = require('express')
 const http = require('http')
 const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
+const helmet = require('helmet') // 보안 옵션 최적화
+const path = require('path')
+const serveStatic = require('serve-static')
 
 // Classify Express
 // 이점: 동시접속 상태나 failover에 대해 처리할 수 있음
@@ -15,6 +19,7 @@ class ApiServer extends http.Server {
     this.currentConns = new Set() // 현재 연결중
     this.busy = new WeakSet() // 요청중인 작업
     this.stopping = false // 종료중
+    this.app.static = serveStatic // static 미들웨어를 serve-static으로 대체
   }
 
   async start () {
@@ -27,14 +32,25 @@ class ApiServer extends http.Server {
       next()
     })
 
+    this.app.use(helmet())
     this.app.use(cookieParser())
+    this.app.use(bodyParser.json())
+    this.app.use(bodyParser.urlencoded({ extended: false }))
+
+    this.app.use(this.app.static(path.join(__dirname, 'dist'), {
+      setHeaders: (res, path) => {
+        res.setHeaders('Access-Control-Allow-Origin', '*')
+        res.setHeaders('Access-Control-Allow-Headers', '*')
+        res.setHeaders('Access-Control-Allow-Methods', 'GET') // 읽기 전용
+      }
+    }))
 
     this.app.get('/_health', (req, res) => {
       res.sendStatus(200)
     })
 
     this.app.use((err, req, res, next) => {
-      if (err) throw err
+      console.error('Internal Error: ', err)
       // res.status(500).send(generateApiError('Api::Error'))
       res.status(500).send('Something Wrong')
     })
