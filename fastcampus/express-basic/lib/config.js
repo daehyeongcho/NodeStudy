@@ -1,5 +1,5 @@
 'use strict'
 
-module.config = {
-  getConfig: () => {}
+module.exports = {
+  getConfig: () => { return { port: 3000 } }
 }
