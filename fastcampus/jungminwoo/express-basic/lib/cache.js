@@ -2,6 +2,8 @@
  * Publisher는 서버단에서 코딩함
  */
 
+/* eslint-disable */
+
 'use strict'
 
 const RedisCluster = require('redis-cluster')
