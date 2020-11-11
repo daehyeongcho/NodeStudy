@@ -8,9 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     description: { type: DataTypes.TEXT }
   })
 
-  Products.prototype.dateFormat = (date) => {
-    return moment(date).format('YYYY-MM-DD')
-  }
+  Products.prototype.dateFormat = date => moment(date).format('YYYY-MM-DD')
 
   return Products
 }
