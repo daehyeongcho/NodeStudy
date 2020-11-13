@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx nodemon -e html server.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,7 +16,7 @@
     "morgan": "^1.10.0",
     "mysql2": "^2.2.5",
     "nunjucks": "^3.2.2",
-    "sequelize": "^6.3.5"
+    "sequelize": "^4.44.4"
   },
   "devDependencies": {
     "puppeteer": "^5.4.1"
