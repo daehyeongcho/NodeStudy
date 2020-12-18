@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+const redis = require('socket.io-redis')
 
 const app = express()
 const port = 3000
@@ -13,6 +14,8 @@ const server = app.listen(port, () => {
 })
 
 const io = require('socket.io')(server)
+// redis 접속
+io.adapter(redis({ host: 'redis', port: 6379 }))
 
 // 사용자명
 const color = ['yellow', 'green', 'red', 'blue', 'white', 'black']
