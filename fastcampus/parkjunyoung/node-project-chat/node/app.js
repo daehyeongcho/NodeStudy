@@ -14,11 +14,24 @@ const server = app.listen(port, () => {
 
 const io = require('socket.io')(server)
 
+// 사용자명
+const color = ['yellow', 'green', 'red', 'blue', 'white', 'black']
+
 io.on('connection', socket => {
+  const username = color[Math.floor(Math.random() * 6)]
+
+  socket.broadcast.emit('join', { username })
+
   console.log('소켓 서버 접속')
   socket.on('client message', data => {
     io.emit('server message', {
+      username,
       message: data.message
     })
+  })
+
+  // disconnect는 예약어
+  socket.on('disconnect', () => {
+    socket.broadcast.emit('leave', { username })
   })
 })
