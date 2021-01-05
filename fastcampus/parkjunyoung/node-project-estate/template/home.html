@@ -1,9 +1,80 @@
-{% set title = "메인페이지" %}
-{% extends "layout/base.html" %}
- 
-{% block content -%}
-    
-<div id="map_area" style="min-height:500px;"></div>
+{% set title = "메인페이지" %} {% extends "layout/base.html" %} {% block content
+-%}
 
+<div id="map_area" style="min-height: 500px"></div>
+<script>
+  var mapContainer = document.getElementById("map_area"), // 지도를 표시할 div
+    mapOption = {
+      center: new kakao.maps.LatLng(
+        {{ map_api.default.lat }},
+        {{ map_api.default.lng }}
+      ), // 지도의 중심좌표
+      level: 6, // 지도의 확대 레벨
+    };
+
+  var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+  // 템플릿 필터
+  // dump: Call JSON.stringify on an object and dump the result into the template.
+  // safe: Mark the value as safe which means that in an environment with automatic escaping enabled this variable will not be escaped.
+  var apts = {{ apts | dump | safe }};
+
+  // 카카오맵은 위도 경도가 반대라서 새로 변수 만들어줌
+  var positions = [];
+  for (var key in apts) {
+    if (apts[key].geo !== null) {
+      // 좌표가 존재할 때만 좌표 세팅
+      positions[key] = {
+        name: apts[key].name,
+        latlng: new kakao.maps.LatLng(
+          apts[key].geo.coordinates[1],
+          apts[key].geo.coordinates[0]
+        )
+      }
+    }
+  }
+
+  // 마커 이미지의 이미지 주소입니다
+  var imageSrc =
+    "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+
+  for (var i = 0; i < positions.length; i++) {
+    // 마커 이미지의 이미지 크기 입니다
+    var imageSize = new kakao.maps.Size(24, 35);
+
+    // 마커 이미지를 생성합니다
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+    // 마커를 생성합니다
+    var marker = new kakao.maps.Marker({
+      map: map, // 마커를 표시할 지도
+      position: positions[i].latlng, // 마커를 표시할 위치
+      title: positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+      image: markerImage, // 마커 이미지
+    });
+
+    var iwContent = '<div style="width:150px;text-align:center;padding:6px 2px;">'+ positions[i].name + '</div>'
+    // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+
+    // 인포윈도우를 생성합니다
+    var infowindow = new kakao.maps.InfoWindow({
+        content : iwContent
+    });
+
+    // 마커에 이벤트를 등록하는 함수 만들고 즉시 호출하여 클로저를 만듭니다
+    // 클로저를 만들어 주지 않으면 마지막 마커에만 이벤트가 등록됩니다
+    (function(marker, infowindow) {
+      kakao.maps.event.addListener(marker, 'mouseover', function() {
+      // 마커에 마우스오버 이벤트가 발생하면 인포윈도우를 마커위에 표시합니다
+        infowindow.open(map, marker);
+      });
+
+      kakao.maps.event.addListener(marker, 'mouseout', function() {
+        infowindow.close();
+      });
+    })(marker, infowindow);
+
+  }
+</script>
 
 {% endblock %}

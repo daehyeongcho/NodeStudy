@@ -1,31 +1,124 @@
-{% set title = "제품 등록" %}
-{% extends "layout/base.html" %}
- 
-{% block content -%}
-    <form action="" method="post">
-        <input type="hidden" name="geo" value="{{ apt.geo.coordinates[0] }}, {{ apt.geo.coordinates[1] }}">
-        <table class="table table-bordered">
-            <tr>
-                <th>이름</th>
-                <td><input type="text" name="name" class="form-control" value="{{ apt.name }}"/></td>
-            </tr>
-            <tr>
-                <th>가격</th>
-                <td><input type="text" name="price" class="form-control" value="{{ apt.price }}"/></td>
-            </tr>
-            <tr>
-                <th>주소</th>
-                <td>
-                    <div class="form-inline">
-                        <input type="text" name="address" class="form-control" value="{{ apt.address }}" style="width: 70%"/>
-                        <a class="btn btn-primary btn-sm btn_select" id="map_search" style="display: inline-block; ">
-                            주소 검색
-                        </a>
-                    </div>
-                    <div id="map_area" style="width:100%;height:350px; margin:10px 0 50px 0; visibility:hidden;"></div>
-                </td>
-            </tr>
-        </table>
-        <button class="btn btn-primary">작성하기</button>
-    </form>
+{% set title = "제품 등록" %} {% extends "layout/base.html" %} {% block content
+-%}
+<form action="" method="post">
+  <input
+    type="hidden"
+    name="geo"
+    value="{{ apt.geo.coordinates[0] }}, {{ apt.geo.coordinates[1] }}"
+  />
+  <table class="table table-bordered">
+    <tr>
+      <th>이름</th>
+      <td>
+        <input
+          type="text"
+          name="name"
+          class="form-control"
+          value="{{ apt.name }}"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th>가격</th>
+      <td>
+        <input
+          type="text"
+          name="price"
+          class="form-control"
+          value="{{ apt.price }}"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th>주소</th>
+      <td>
+        <div class="form-inline">
+          <input
+            type="text"
+            name="address"
+            class="form-control"
+            value="{{ apt.address }}"
+            style="width: 70%"
+          />
+          <a
+            class="btn btn-primary btn-sm btn_select"
+            id="map_search"
+            style="display: inline-block"
+          >
+            주소 검색
+          </a>
+        </div>
+        <div
+          id="map_area"
+          style="
+            width: 100%;
+            height: 350px;
+            margin: 10px 0 50px 0;
+            visibility: hidden;
+          "
+        ></div>
+      </td>
+    </tr>
+  </table>
+  <button class="btn btn-primary">작성하기</button>
+</form>
+<script>
+  var mapContainer = document.getElementById("map_area"), // 지도를 표시할 div
+    mapOption = {
+      center: new kakao.maps.LatLng(
+        {{ map_api.default.lat }},
+        {{ map_api.default.lng }}), // 지도의 중심좌표
+        level: 3, // 지도의 확대 레벨
+      };
+
+  // 지도를 표시할 div와 지도 옵션으로 지도를 생성합니다
+  var map = new kakao.maps.Map(mapContainer, mapOption);
+
+  {# var imageSrc = '/static/images/marker_red.png',
+    imageSize = new kakao.maps.Size(30, 50) // 마커이미지의 크기입니다
+    //imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+  var markerImage = new kakao.maps.MarkerImage(imageSrc,imageSize)//, imageSize, imageOption)
+
+  // 지도를 클릭한 위치에 표출할 마커입니다
+  var marker = new kakao.maps.Marker({
+    // 지도 중심좌표에 마커를 생성합니다
+    position: map.getCenter(),
+    image: markerImage
+  });
+  // 지도에 마커를 표시합니다
+  marker.setMap(map); #}
+
+  // 수정 시 : 주소와 좌표가 존재하는 경우 지도 표시
+  {% if apt.address and apt.geo %}
+  $('#map_area').css('height', '350px');
+  mapSearchByAddress(
+    map,
+    '#map_area',
+    'input[name=geo]',
+    $('input[name=name]'),
+    $('input[name=address]')
+  );
+  {% endif %}
+
+  $('#map_search').click(function(){
+    var $name = $('input[name=name]');
+    var $address = $('input[name=address]');
+
+    // console.log($address.val());
+
+    if (!$name.val()) {
+      alert("아파트 명을 입력하세요.");
+      return false;
+    }
+
+    if (!$address.val()) {
+      alert("주소를 입력하세요.");
+      return false;
+    }
+
+    $('#map_area').css('height', '350px');
+
+    mapSearchByAddress(map, '#map_area', 'input[name=geo]', $name, $address);
+  });
+</script>
 {% endblock %}

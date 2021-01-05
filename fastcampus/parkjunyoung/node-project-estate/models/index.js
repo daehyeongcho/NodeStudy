@@ -39,6 +39,20 @@ Object.keys(db).forEach(modelName => {
   }
 })
 
+/** GeomFromText -> ST_GeomFromText
+ * MySQL 8.0에선 GeomFromText가 ST_GeomFromText로 변경되었음.
+ * 그래서 Sequelize에서도 ST_를 쓰도록 프로토타입을 덮어씌움.
+ * node_modules/sequelize/lib/data-types.js 파일에서 GeomFromText를 ST_로 바꿔도 됨.
+ * https://github.com/sequelize/sequelize/issues/9786
+ */
+const Wkt = require('terraformer-wkt-parser')
+Sequelize.GEOMETRY.prototype._stringify = (value, options) => {
+  return 'ST_GeomFromText(' + options.escape(Wkt.convert(value)) + ')'
+}
+Sequelize.GEOGRAPHY.prototype._stringify = (value, options) => {
+  return 'ST_GeomFromText(' + options.escape(Wkt.convert(value)) + ')'
+}
+
 db.sequelize = sequelize
 db.Sequelize = Sequelize
 
